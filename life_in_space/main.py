@@ -100,6 +100,10 @@ current_time = datetime.now()
 # Experiment Loop
 while current_time < START_TIME + timedelta(minutes=5):
 
+    # Time management
+    sleep(180)
+    
+    # Update condition
     current_time = datetime.now()
 
 # End / Clear Phase
