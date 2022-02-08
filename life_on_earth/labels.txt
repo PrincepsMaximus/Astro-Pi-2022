@@ -1,0 +1,5 @@
+0 No clouds
+1 Cirrus
+2 Cumulus
+3 Stratus
+4 Night

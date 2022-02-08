@@ -24,8 +24,9 @@ from pycoral.adapters import classify
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.dataset import read_label_file
 
-# Record the start time
+# Record the start time and initiate counter
 START_TIME = datetime.now()
+counter = 1
 
 # Working directory for data recording
 BASE_FOLDER = Path(__file__).parent.resolve()
@@ -37,7 +38,7 @@ CAMERA.resolution(4056, 3040) # Approx. 6 MB / pic or 170 pics / GB
 
 # Set up ML (PyCoral)
 MODEL_FILE = BASE_FOLDER/'astropi-cloud-model.tflite'
-LABEL_FILE = BASE_FOLDER/'cloud-types.txt'
+LABEL_FILE = BASE_FOLDER/'labels.txt'
 INTERPRETER = make_interpreter(f"{MODEL_FILE}")
 INTERPRETER.allocate_tensors()
 
@@ -110,16 +111,16 @@ def capture(camera, image):
     camera.capture(image)
 
 # Create CSV file
-create_csv(DATA_FILE, ("No.", "Time", "Predicted cloud type"))
+create_csv(DATA_FILE, ("No.", "Time", "Predicted cloud type", "Certainty"))
 
 # Record the current time
 current_time = datetime.now()
 
 # Experiment Loop
-while current_time < START_TIME + timedelta(minutes=5):
+while current_time < START_TIME + timedelta(minutes=175):
     # Start variables
-    counter = 1
     predicted_cloud = ""
+    certainty = ""
 
     # Capture an image
     image_file = f"{BASE_FOLDER}/image_{counter:03d}.jpg"
@@ -133,12 +134,14 @@ while current_time < START_TIME + timedelta(minutes=5):
     classes = classify.get_classes(INTERPRETER, top_k=1)
     for c in classes:
         predicted_cloud = f"{LABELS.get(c.id, c.id)}"  
+        certainty = f"{c.score:.5f}"
 
     # Data management
     data = (
         counter,
         datetime.now(),
         predicted_cloud,
+        certainty,
     )
     add_csv_data(DATA_FILE, data)
 
