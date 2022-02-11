@@ -34,7 +34,7 @@ DATA_FILE = BASE_FOLDER/'data.csv'
 
 # Set up Pi Camera
 CAMERA = PiCamera()
-CAMERA.resolution(4056, 3040) # Approx. 6 MB / pic or 170 pics / GB
+CAMERA.resolution = (4056, 3040) # Approx. 6 MB / pic or 170 pics / GB
 
 # Set up ML (PyCoral)
 MODEL_FILE = BASE_FOLDER/'astropi-cloud-model.tflite'
@@ -126,7 +126,7 @@ while current_time < START_TIME + timedelta(minutes=175):
     image_file = f"{BASE_FOLDER}/image_{counter:03d}.jpg"
     capture(CAMERA, image_file)
 
-    # Predict cloud type (doesn't check whether day or night)
+    # Predict cloud type
     image = Image.open(image_file).convert('RGB').resize(SIZE, Image.ANTIALIAS)
     common.set_input(INTERPRETER, image)
 
@@ -152,4 +152,4 @@ while current_time < START_TIME + timedelta(minutes=175):
     counter += 1
     current_time = datetime.now()
 
-# End / Clear Phase
+# End
