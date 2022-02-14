@@ -20,8 +20,6 @@ from sense_hat import SenseHat
 from skyfield.api import load
 from time import sleep
 
-from urllib3 import add_stderr_logger
-
 # Record the start time
 START_TIME = datetime.now()
 
@@ -34,6 +32,51 @@ SENSE = SenseHat()
 
 # Set up the correct ephemeris
 EPHEMERIS = load('de421.bsp')
+
+# Colours (for matrix)
+hyperion = [147, 18, 222] # Our 'official' colour
+d = [0, 0, 0] # Black (dark)
+w = [255, 255, 255] # White
+y = [247, 227, 5] # Yellow
+b = [10, 172, 242] # Blue
+o = [242, 80, 10] # Orange
+g = [105, 95, 91] # Grey
+
+# LED matrix presets
+smiley = [
+    d, d, o, o, o, o, d, d,
+    d, o, d, d, d, d, o, d,
+    o, d, o, d, d, o, d, o,
+    o, d, d, d, d, d, d, o,
+    o, d, o, d, d, o, d, o,
+    o, d, d, o, o, d, d, o,
+    d, o, d, d, d, d, o, d,
+    d, d, o, o, o, o, d, d,
+]
+
+sun = [
+    y, b, b, b, b, b, b, y,
+    b, y, b, y, y, b, y, b,
+    b, b, y, y, y, y, b, b,
+    b, y, y, y, y, y, y, b,
+    b, y, y, y, y, y, y, b,
+    b, b, y, y, y, y, b, b,
+    b, y, b, y, y, b, y, b,
+    y, b, b, b, b, b, b, y,    
+]
+
+moon = [
+    g, g, g, g, g, g, g, g,
+    g, g, g, g, w, w, g, g,
+    g, g, w, w, g, w, g, g,
+    g, w, w, g, g, g, g, g,
+    g, w, w, g, g, g, g, g,
+    g, g, w, w, g, g, w, g,
+    g, g, g, w, w, w, w, g,
+    g, g, g, g, g, g, g, g,    
+]
+
+presets = [smiley, sun, moon]
 
 # Methods / Functions
 def create_csv(data_file, header):
@@ -86,8 +129,17 @@ def get_humidity():
     '''This function returns (string) the current humidity.'''
     return str(round(SENSE.get_humidity(), 4)) + "%"
 
-SENSE.colour.integration_cycles = 64
-SENSE.colour.gain = 60
+# LED Matrix handler
+counter = 0     # Periodic change of display (making sure program isn't freezed)
+
+def update_matrix():
+    if counter % 5:
+        SENSE.set_pixels(presets[0])
+    else:
+        if get_sunlight() == "In sunlight":
+            SENSE.set_pixels(presets[1])
+        else:
+            SENSE.set_pixels(presets[2])
 
 # Create CSV file
 create_csv(DATA_FILE, ("Date/Time", "Location", "Sunlight", "Magnetic field strength", "Temperature", "Humidity"))
@@ -95,8 +147,13 @@ create_csv(DATA_FILE, ("Date/Time", "Location", "Sunlight", "Magnetic field stre
 # Record the current time
 current_time = datetime.now()
 
+# Welcome message
+SENSE.show_message("Greetings from the children at JVS Hyperion.", text_colour=hyperion)
+
 # Experiment Loop
 while current_time < START_TIME + timedelta(minutes=175):
+    # Update matrix
+    update_matrix()
 
     # Data management
     data = (
@@ -114,5 +171,6 @@ while current_time < START_TIME + timedelta(minutes=175):
     
     # Update condition
     current_time = datetime.now()
+    counter += 1
 
 # End
