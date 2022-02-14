@@ -65,7 +65,7 @@ def get_location():
 def get_sunlight():
     '''This function returns (string) whether the ISS is currently lit by the sun or not.'''
     status = "In "
-    if ISS.at(load.timescale.now()).is_sunlit(EPHEMERIS):
+    if ISS.at(load.timescale().now()).is_sunlit(EPHEMERIS):
         status += "sunlight"
     else:
         status += "darkness"
@@ -78,21 +78,17 @@ def get_magnetic_field():
 
 def get_temperature():
     '''This function returns (string) the current temperature.'''
-    return round(SENSE.get_temperature(), 4) + "°C"
+    return str(round(SENSE.get_temperature(), 4)) + "°C"
 
 def get_humidity():
     '''This function returns (string) the current humidity.'''
-    return round(SENSE.get_humidity(), 4) + "%"
-
-def get_luminosity():
-    '''This function returns (string) the current luminosity.'''
-    return round((SENSE.clear() / 256) * 100, 3) + "%"
+    return str(round(SENSE.get_humidity(), 4)) + "%"
 
 SENSE.colour.integration_cycles = 64
 SENSE.colour.gain = 60
 
 # Create CSV file
-create_csv(DATA_FILE, ("Date/Time", "Location", "Sunlight", "Magnetic field strength", "Temperature", "Humidity", "Luminosity"))
+create_csv(DATA_FILE, ("Date/Time", "Location", "Sunlight", "Magnetic field strength", "Temperature", "Humidity"))
 
 # Record the current time
 current_time = datetime.now()

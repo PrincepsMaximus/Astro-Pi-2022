@@ -34,7 +34,7 @@ DATA_FILE = BASE_FOLDER/'data.csv'
 
 # Set up Pi Camera
 CAMERA = PiCamera()
-CAMERA.resolution(4056, 3040) # Approx. 6 MB / pic or 170 pics / GB
+CAMERA.resolution = (4056, 3040) # Approx. 6 MB / pic or 170 pics / GB
 
 # Set up ML (PyCoral)
 MODEL_FILE = BASE_FOLDER/'astropi-cloud-model.tflite'
