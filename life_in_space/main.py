@@ -20,6 +20,8 @@ from sense_hat import SenseHat
 from skyfield.api import load
 from time import sleep
 
+from urllib3 import add_stderr_logger
+
 # Record the start time
 START_TIME = datetime.now()
 
@@ -94,12 +96,23 @@ create_csv(DATA_FILE, ("Date/Time", "Location", "Sunlight", "Magnetic field stre
 current_time = datetime.now()
 
 # Experiment Loop
-while current_time < START_TIME + timedelta(minutes=5):
+while current_time < START_TIME + timedelta(minutes=175):
+
+    # Data management
+    data = (
+        datetime.now(),
+        get_location(),
+        get_sunlight(),
+        get_magnetic_field(),
+        get_temperature(),
+        get_humidity(),
+    )
+    add_csv_data(DATA_FILE, data)
 
     # Time management
-    sleep(180)
+    sleep(15)
     
     # Update condition
     current_time = datetime.now()
 
-# End / Clear Phase
+# End
