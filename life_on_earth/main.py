@@ -117,7 +117,7 @@ create_csv(DATA_FILE, ("No.", "Time", "Predicted cloud type", "Certainty"))
 current_time = datetime.now()
 
 # Experiment Loop
-while current_time < START_TIME + timedelta(minutes=175):
+while current_time < START_TIME + timedelta(minutes=177):
     # Start variables
     predicted_cloud = ""
     certainty = ""
@@ -146,7 +146,7 @@ while current_time < START_TIME + timedelta(minutes=175):
     add_csv_data(DATA_FILE, data)
 
     # Time management
-    sleep(240)
+    sleep(100)
 
     # Increment counter variable and update stop condition
     counter += 1
