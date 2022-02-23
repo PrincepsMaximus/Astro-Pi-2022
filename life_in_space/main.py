@@ -8,12 +8,13 @@ humidity, etc. to determine whether these fluctuate due to the sun(light).
 
 Team: Hyperion
 Author: JVS Hyperion (Youth association for Astronomy)
-Version: 0.1
+Version: 1.0
 '''
 
 # Import statements
 import csv
 from datetime import date, datetime, timedelta
+from logzero import logger, logfile
 from pathlib import Path
 from orbit import ISS
 from sense_hat import SenseHat
@@ -26,6 +27,7 @@ START_TIME = datetime.now()
 # Working directory for data recording
 BASE_FOLDER = Path(__file__).parent.resolve()
 DATA_FILE = BASE_FOLDER/'data.csv'
+LOGFILE = logfile(BASE_FOLDER/"events.log")
 
 # Set up Sense Hat
 SENSE = SenseHat()
@@ -152,25 +154,29 @@ SENSE.show_message("Greetings from the children at JVS Hyperion.", text_colour=h
 
 # Experiment Loop
 while current_time < START_TIME + timedelta(minutes=175):
-    # Update matrix
-    update_matrix()
+    try:
+        # Update matrix
+        update_matrix()
 
-    # Data management
-    data = (
-        datetime.now(),
-        get_location(),
-        get_sunlight(),
-        get_magnetic_field(),
-        get_temperature(),
-        get_humidity(),
-    )
-    add_csv_data(DATA_FILE, data)
+        # Data management
+        data = (
+            datetime.now(),
+            get_location(),
+            get_sunlight(),
+            get_magnetic_field(),
+            get_temperature(),
+            get_humidity(),
+        )
+        add_csv_data(DATA_FILE, data)
 
-    # Time management
-    sleep(15)
-    
-    # Update condition
-    current_time = datetime.now()
-    counter += 1
+        # Time management
+        sleep(15)
+        
+        # Update condition
+        current_time = datetime.now()
+        counter += 1
+
+    except Exception as e:
+        logger.error(f'{e.__class__.__name__}: {e}')
 
 # End
