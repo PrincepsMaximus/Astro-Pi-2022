@@ -6,7 +6,7 @@ That would make the exploration of our hypothesis concerning the cloud coverage 
 
 Team: JVS_HYP
 Author: JVS Hyperion (Youth association for Astronomy)
-Version: 0.1
+Version: 1.0
 '''
 
 # Import statements
@@ -146,7 +146,7 @@ while current_time < START_TIME + timedelta(minutes=177):
     add_csv_data(DATA_FILE, data)
 
     # Time management
-    sleep(100)
+    sleep(90)
 
     # Increment counter variable and update stop condition
     counter += 1
